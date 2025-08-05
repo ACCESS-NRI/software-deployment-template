@@ -56,6 +56,11 @@ Regarding the secrets and variables that must be created:
 
 ### File Modifications
 
+#### In `.github/`
+
+* In `ci.yml` and `cd.yml`, the `inputs.*-schema-version` for `uses: access-nri/build-cd` entrypoint workflows must be filled in with valid versions taken from `ACCESS-NRI/schema`.
+* `.github/CODEOWNERS` can require reviews from users or teams for specific manifests, if required.
+
 #### In `config/versions.json`
 
 * `.spack` must be given a version. For example, it will clone the associated `releases/vVERSION` branch of `ACCESS-NRI/spack` if you give it `VERSION`.
