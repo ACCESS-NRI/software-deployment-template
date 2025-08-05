@@ -105,11 +105,18 @@ jobs:
       max-parallel: 1
       matrix:
         manifest: ${{ fromJson(needs.setup-pr.outputs.manifest) }}
-    uses: access-nri/build-cd/.github/workflows/ci.yml@v5-model-tools
+    uses: access-nri/build-cd/.github/workflows/ci.yml@v6
     with:
       model: ${{ matrix.manifest.name }}
       pr: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
       spack-manifest-path: ${{ matrix.manifest.path }}
+      # We have a custom schema for general software deployment manifests, so we specify it here
+      spack-manifest-schema-path: au.org.access-nri/tools/spack/environment/deployment
+     # TODO: Get versions of applicable schema from ACCESS-NRI/schema
+      spack-manifest-schema-version: SET_SCHEMA_VERSION_HERE
+      config-versions-schema-version: SET_SCHEMA_VERSION_HERE
+      config-packages-schema-version: SET_SCHEMA_VERSION_HERE
+
     permissions:
       pull-requests: write
       contents: write
@@ -130,7 +137,7 @@ jobs:
       max-parallel: 1
       matrix:
         manifest: ${{ fromJson(needs.setup-pr.outputs.manifest) }}
-    uses: access-nri/build-cd/.github/workflows/ci-closed.yml@v5-model-tools
+    uses: access-nri/build-cd/.github/workflows/ci-closed.yml@v6
     with:
       root-sbd: ${{ matrix.manifest.name }}
     secrets: inherit
