@@ -66,8 +66,11 @@ jobs:
           json: true
           output_dir: .
           write_output_files: true
+          # Get all spack.yamls under a directory, but not one at the root
           files: |
             **/spack.yaml
+          files_ignore: |
+            spack.yaml
 
       - name: Format changed files
         # We reformat the json list of changed files as list of objects containing the name (the containing folder) and the path (the containing folder AND manifest name)
