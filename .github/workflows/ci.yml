@@ -108,7 +108,7 @@ jobs:
       max-parallel: 1
       matrix:
         manifest: ${{ fromJson(needs.setup-pr.outputs.manifest) }}
-    uses: access-nri/build-cd/.github/workflows/ci.yml@v7
+    uses: access-nri/build-cd/.github/workflows/ci.yml@v8
     with:
       model: ${{ matrix.manifest.name }}
       pr: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
@@ -139,7 +139,7 @@ jobs:
       max-parallel: 1
       matrix:
         manifest: ${{ fromJson(needs.setup-pr.outputs.manifest) }}
-    uses: access-nri/build-cd/.github/workflows/ci-closed.yml@v7
+    uses: access-nri/build-cd/.github/workflows/ci-closed.yml@v8
     with:
-      root-sbd: ${{ matrix.manifest.name }}
+      spack-manifest-path: ${{ matrix.manifest.path }}
     secrets: inherit
