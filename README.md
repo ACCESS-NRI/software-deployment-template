@@ -48,7 +48,6 @@ Regarding the secrets and variables that must be created:
 
 * `ADMIN_MODULES_DIR`: Module directory that will contain the spack module usable by service users. For example, `/g/data/vk83/admin/modules` on Gadi.
 * `DEPLOYED_MODULES_DIR`: Directory that will contain the modules created during the installation of the model. This can be virtual modules created by a [`.modulerc` file](https://github.com/ACCESS-NRI/build-cd/tree/main/tools/modules) in the directory.
-* `DEPLOYMENT_TARGET`: Name of the deployment target. It is exported to the deployment target and used for variations in `spack.yaml` build processes - seen most prominently in mutually-exclusive 'when' clauses like `spack.definitions[].when = env['DEPLOYMENT_TARGET'] == 'gadi'`. Also used for logging purposes.
 * `SPACK_INSTALLS_ROOT_LOCATION`: Path to the directory that contains all versions of a deployment of `spack`. For example, if `/some/apps/spack` is the `SPACK_INSTALLS_ROOT_LOCATION`, that directory will contain directories like `0.20`, `0.21`, `0.22`, which in turn contain an install of `spack`, `spack-packages` and `spack-config`
 * `SPACK_YAML_LOCATION`: Path to a directory that will contain the `spack.yaml` from this repository during deployment
 * (Optional) `SPACK_INSTALL_ADDITIONAL_ARGS`: Additional flags outside of `--fresh --fail-fast` to add to the `spack install` command. For advanced users who need to tailor the installation options in their repository.
@@ -57,15 +56,25 @@ Regarding the secrets and variables that must be created:
 
 #### In `.github/`
 
-* In `ci.yml` and `cd.yml`, the `inputs.*-schema-version` for `uses: access-nri/build-cd` entrypoint workflows must be filled in with valid versions taken from `ACCESS-NRI/schema`.
+* In `ci.yml` and `cd.yml`, the `inputs.spack-manifest-schema-version` for `uses: access-nri/build-cd` entrypoint workflows must be filled in with a valid version taken from [`ACCESS-NRI/schema`](https://github.com/ACCESS-NRI/schema/tree/main/au.org.access-nri/tools/spack/environment/deployment).
 * `.github/CODEOWNERS` can require reviews from users or teams for specific manifests, if required.
-
-#### In `config/versions.json`
-
-* `.spack` must be given a version. For example, it will clone the associated `releases/vVERSION` branch of `ACCESS-NRI/spack` if you give it `VERSION`.
-* `.access-spack-packages` should also have a CalVer-compliant tag as the version. See the [associated repo](https://github.com/ACCESS-NRI/spack-packages/tags) for a list of available tags.
 
 #### In `spack.yaml`
 
 > [!IMPORTANT]
 > Unlike Model Deployment Repositories (and [the template](https://github.com/ACCESS-NRI/model-deployment-template) they are based on), you can have multiple `spack.yaml` manifests in one repository. Just remember to demarcate them by directory name - eg. `TOOL1/spack.yaml`, `TOOL2/spack.yaml`, etc.
+
+> [!NOTE]
+> The information that previously lived in `config/versions.json` and `config/packages.json` now lives in each `spack.yaml` manifest as Reserved Definitions and a `spack.repos` entry.
+
+For each `TOOL/spack.yaml`:
+
+* `spack.definitions._name` and `spack.definitions._version`: reserved definitions that give the deployment its name and version.
+* `spack.definitions._spack-version`: The version of `spack` to use. For example, `["1.1"]` will use the associated `1.1` instance of `ACCESS-NRI/spack` on the HPC.
+* `spack.definitions._provenance`: If components are to be kept track of in the release provenance database, their package names must be added to this list. They will also be injected into the `spack.modules.tcl.default` section of the manifest. For SDRs, this is not required, so it can be left as an empty array.
+* `spack.definitions._injection`: If packages need to be injected automatically into the manifest's modules, their package names must be added to this list. For SDRs, this is not required, so it can be left as an empty array.
+* `spack.repos.access_spack_packages`: The `access-spack-packages` version to clone, given as a `tag:`, `branch:` or `commit:`. Tags are CalVer-compliant - see the [associated repo](https://github.com/ACCESS-NRI/access-spack-packages/tags) for a list. Keep `destination:` as-is to aid the infra in cleanup afterwards.
+
+Optionally:
+
+* `spack.definitions._custom-scopes` (optional): A list of custom scopes from `spack-config`s `custom/cd/vVERSION/HPC` - this is usually for restricted builds.

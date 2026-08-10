@@ -14,15 +14,12 @@ on:
       - dev
       - backport/*.*
     paths:
-      - config/**
       - '**/spack.yaml'
   issue_comment:
     types:
       - created
       - edited
 jobs:
-  # FIXME: For now, this modified workflow does not deploy based on changes to the config/** files.
-  # If you change the config/** files, you will need to manually update the manifests you want to deploy.
   setup-pr:
     name: Setup PR Info
     if: >-
@@ -108,16 +105,13 @@ jobs:
       max-parallel: 1
       matrix:
         manifest: ${{ fromJson(needs.setup-pr.outputs.manifest) }}
-    uses: access-nri/build-cd/.github/workflows/ci.yml@v8
+    uses: access-nri/build-cd/.github/workflows/ci.yml@v9
     with:
       model: ${{ matrix.manifest.name }}
-      pr: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
       spack-manifest-path: ${{ matrix.manifest.path }}
       # We have a custom schema for general software deployment manifests, so we specify it here
       spack-manifest-schema-path: au.org.access-nri/tools/spack/environment/deployment
-      spack-manifest-schema-version: 1-0-0
-      config-versions-schema-version: 3-0-0
-      config-packages-schema-version: 1-0-0
+      spack-manifest-schema-version: 2-0-0
 
     permissions:
       pull-requests: write
@@ -139,7 +133,7 @@ jobs:
       max-parallel: 1
       matrix:
         manifest: ${{ fromJson(needs.setup-pr.outputs.manifest) }}
-    uses: access-nri/build-cd/.github/workflows/ci-closed.yml@v8
+    uses: access-nri/build-cd/.github/workflows/ci-closed.yml@v9
     with:
       spack-manifest-path: ${{ matrix.manifest.path }}
     secrets: inherit
