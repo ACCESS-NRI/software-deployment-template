@@ -71,7 +71,10 @@ For each `TOOL/spack.yaml`:
 
 * `spack.definitions._name` and `spack.definitions._version`: reserved definitions that give the deployment its name and version.
 * `spack.definitions._spack-version`: The version of `spack` to use. For example, `["1.1"]` will use the associated `1.1` instance of `ACCESS-NRI/spack` on the HPC.
-* `spack.definitions._custom-scopes` (optional): A list of custom scopes from `spack-config`s `custom/cd/` - this is usually for restricted builds.
 * `spack.definitions._provenance`: If components are to be kept track of in the release provenance database, their package names must be added to this list. They will also be injected into the `spack.modules.tcl.default` section of the manifest. For SDRs, this is not required, so it can be left as an empty array.
 * `spack.definitions._injection`: If packages need to be injected automatically into the manifest's modules, their package names must be added to this list. For SDRs, this is not required, so it can be left as an empty array.
 * `spack.repos.access_spack_packages`: The `access-spack-packages` version to clone, given as a `tag:`, `branch:` or `commit:`. Tags are CalVer-compliant - see the [associated repo](https://github.com/ACCESS-NRI/access-spack-packages/tags) for a list. Keep `destination:` as-is to aid the infra in cleanup afterwards.
+
+Optionally:
+
+* `spack.definitions._custom-scopes` (optional): A list of custom scopes from `spack-config`s `custom/cd/vVERSION/HPC` - this is usually for restricted builds.
